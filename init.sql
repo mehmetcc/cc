@@ -30,6 +30,7 @@ CREATE TABLE installments (
     amount NUMERIC(10,2) NOT NULL,
     credit_id INT NOT NULL REFERENCES credits(id) ON DELETE CASCADE,
     payment_type VARCHAR(20) NOT NULL,
+    payment_date TIMESTAMP NOT NULL,
     status BOOLEAN NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP

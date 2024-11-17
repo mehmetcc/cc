@@ -13,12 +13,12 @@ public class CreditController {
 
     private final CreditService creditService;
 
-    public CreditController(CreditService creditService) {
+    public CreditController(final CreditService creditService) {
         this.creditService = creditService;
     }
 
     @PostMapping
-    public ResponseEntity<CreditResponse> createCredit(@RequestBody CreditRequest creditRequest) {
+    public ResponseEntity<CreditResponse> createCredit(final @RequestBody CreditRequest creditRequest) {
         var credit = creditService.createCredit(creditRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(CreditResponse.fromCredit(credit));
     }

@@ -2,16 +2,21 @@ package org.mehmetcc.credit.credit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mehmetcc.credit.commons.date.DateUtils;
 import org.mehmetcc.credit.commons.user.User;
 import org.mehmetcc.credit.commons.user.UserClient;
 import org.mehmetcc.credit.installment.Installment;
+import org.mehmetcc.credit.installment.PaymentType;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.IntStream;
 
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -19,6 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 class CreditServiceTest {
+    // TODO this is embarrassingly bad. Fix in the future
     @Mock
     private UserClient client;
 
@@ -53,15 +59,13 @@ class CreditServiceTest {
                 .userId(1)
                 .build();
 
-        var installments = Stream
-                .of(BigDecimal.valueOf(3.0), BigDecimal.valueOf(3.0), BigDecimal.valueOf(3.0), BigDecimal.valueOf(3.0))
-                .map(value -> Installment.builder()
-                        .id(1)
-                        .amount(value)
+        var installments = IntStream.range(1, 5)
+                .mapToObj(i -> Installment.builder()
+                        .amount(BigDecimal.valueOf(3.0))
                         .credit(credit)
                         .status(true)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
+                        .paymentType(PaymentType.NOT_PAID)
+                        .paymentDate(DateUtils.calculateNextThirtyDays(LocalDateTime.now(), i))
                         .build())
                 .toList();
 
@@ -90,7 +94,9 @@ class CreditServiceTest {
         // Assertions
         assertThat(output.getInstallments())
                 .hasSize(4)
-                .allSatisfy(item -> assertThat(item.getAmount()).isEqualTo(BigDecimal.valueOf(3.0)));
+                .allSatisfy(item -> assertThat(item.getAmount()).isEqualTo(BigDecimal.valueOf(3.0)))
+                .allSatisfy(item -> assertThat(item.getPaymentDate().getDayOfWeek()).isNotEqualTo(SATURDAY))
+                .allSatisfy(item -> assertThat(item.getPaymentDate().getDayOfWeek()).isNotEqualTo(SUNDAY));
         assertThat(output.getAmount()).isEqualTo(BigDecimal.valueOf(12.0));
     }
 }

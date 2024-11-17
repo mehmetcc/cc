@@ -1,10 +1,7 @@
 package org.mehmetcc.credit.credit;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.mehmetcc.credit.installment.Installment;
@@ -16,8 +13,9 @@ import java.util.List;
 @Entity
 @Table(name = "credits")
 @Data
-@AllArgsConstructor
 @Builder
+@ToString
+@AllArgsConstructor
 @NoArgsConstructor
 public class Credit {
     @Id

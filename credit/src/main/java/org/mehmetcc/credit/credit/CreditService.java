@@ -1,6 +1,6 @@
 package org.mehmetcc.credit.credit;
 
-import lombok.extern.slf4j.Slf4j;
+import org.mehmetcc.credit.commons.date.DateUtils;
 import org.mehmetcc.credit.commons.user.UserClient;
 import org.mehmetcc.credit.installment.Installment;
 import org.mehmetcc.credit.installment.PaymentType;
@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.IntStream;
 
-@Slf4j
 @Service
 public class CreditService {
 
@@ -21,38 +21,39 @@ public class CreditService {
     private final UserClient userClient;
 
     @Autowired
-    public CreditService(CreditRepository creditRepository, UserClient userClient) {
+    public CreditService(final CreditRepository creditRepository, final UserClient userClient) {
         this.creditRepository = creditRepository;
         this.userClient = userClient;
     }
 
     @Transactional
-    public Credit createCredit(CreditRequest creditRequest) {
+    public Credit createCredit(final CreditRequest creditRequest) {
         var user = userClient.getById(creditRequest.getUserId());
 
         Credit credit = new Credit();
         credit.setUserId(user.getId());
         credit.setAmount(creditRequest.getAmount());
         credit.setStatus(true);
-        credit.setInstallments(getIntermediaryInstallments(creditRequest, credit));
+        credit.setInstallments(processIntermediaryInstallments(creditRequest, credit));
 
         return creditRepository.save(credit);
     }
 
-    private List<Installment> getIntermediaryInstallments(CreditRequest creditRequest, Credit credit) {
-        List<Installment> installments = new ArrayList<>();
-        BigDecimal installmentAmount = creditRequest.getAmount()
+    private List<Installment> processIntermediaryInstallments(final CreditRequest creditRequest, final Credit credit) {
+        return IntStream.range(1, creditRequest.getInstallmentCount() + 1)
+                .mapToObj(i -> Installment.builder()
+                        .amount(calculateMonthlyPayment(creditRequest))
+                        .credit(credit)
+                        .status(true)
+                        .paymentType(PaymentType.NOT_PAID)
+                        .paymentDate(DateUtils.calculateNextThirtyDays(LocalDateTime.now(), i))
+                        .build())
+                .toList();
+    }
+
+    private BigDecimal calculateMonthlyPayment(final CreditRequest creditRequest) {
+        return creditRequest
+                .getAmount()
                 .divide(BigDecimal.valueOf(creditRequest.getInstallmentCount()), RoundingMode.HALF_UP);
-
-        for (int i = 0; i < creditRequest.getInstallmentCount(); i++) {
-            Installment installment = new Installment();
-            installment.setAmount(installmentAmount);
-            installment.setStatus(true);
-            installment.setCredit(credit);
-            installment.setPaymentType(PaymentType.NOT_PAID);
-            installments.add(installment);
-        }
-
-        return installments;
     }
 }
