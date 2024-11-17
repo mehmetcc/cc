@@ -1,21 +1,19 @@
 package org.mehmetcc.credit.credit;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface CreditRepository extends JpaRepository<Credit, Integer> {
-    List<Credit> findByUserId(Integer userId);
+    Page<Credit> findByUserId(Integer userId, Pageable pageable);
 
-    List<Credit> findByUserIdAndStatus(Integer userId, Boolean status);
+    Page<Credit> findByUserIdAndStatusTrueOrderByCreatedAtAsc(Integer userId, Pageable pageable);
 
-    List<Credit> findByUserIdAndStatusTrueOrderByCreatedAtAsc(Integer userId);
+    Page<Credit> findByUserIdAndStatusTrueOrderByCreatedAtDesc(Integer userId, Pageable pageable);
 
-    List<Credit> findByUserIdAndStatusTrueOrderByCreatedAtDesc(Integer userId);
+    Page<Credit> findByUserIdAndStatusFalseOrderByCreatedAtAsc(Integer userId, Pageable pageable);
 
-    List<Credit> findByUserIdAndStatusFalseOrderByCreatedAtAsc(Integer userId);
-
-    List<Credit> findByUserIdAndStatusFalseOrderByCreatedAtDesc(Integer userId);
+    Page<Credit> findByUserIdAndStatusFalseOrderByCreatedAtDesc(Integer userId, Pageable pageable);
 }

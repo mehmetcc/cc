@@ -5,6 +5,8 @@ import org.mehmetcc.credit.commons.user.UserClient;
 import org.mehmetcc.credit.installment.Installment;
 import org.mehmetcc.credit.installment.PaymentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +18,6 @@ import java.util.stream.IntStream;
 
 @Service
 public class CreditService {
-
     private final CreditRepository creditRepository;
     private final UserClient userClient;
 
@@ -26,28 +27,30 @@ public class CreditService {
         this.userClient = userClient;
     }
 
-    public List<Credit> getCreditsByUserId(final Integer userId) {
+    public Page<Credit> getCreditsByUserId(final Integer userId, final Pageable pageable) {
         var user = userClient.getById(userId);
-        return creditRepository.findByUserId(user.getId());
+        return creditRepository.findByUserId(user.getId(), pageable);
     }
 
-    public List<Credit> getFilteredCreditsByUserId(final Integer userId,
+    public Page<Credit> getFilteredCreditsByUserId(final Integer userId,
                                                    final Boolean status,
-                                                   final String sortingOrder) {
+                                                   final String sortingOrder,
+                                                   final Pageable pageable) {
         var user = userClient.getById(userId);
 
         // Pfff.. Sometimes I really miss Scala
         // This is arguably the lesser of two evils, you can introduce an enum as well and switch based on that,
         // although my package size is already getting too telescopic so here we are
         if (status) {
-            if (sortingOrder.equals("DESC")) return creditRepository
-                    .findByUserIdAndStatusTrueOrderByCreatedAtDesc(user.getId());
-            else return creditRepository.findByUserIdAndStatusTrueOrderByCreatedAtAsc(user.getId());
+            if (sortingOrder.equals("DESC"))
+                return creditRepository.findByUserIdAndStatusTrueOrderByCreatedAtDesc(user.getId(), pageable);
+            else
+                return creditRepository.findByUserIdAndStatusTrueOrderByCreatedAtAsc(user.getId(), pageable);
         } else {
             if (sortingOrder.equals("DESC"))
-                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtDesc(user.getId());
+                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtDesc(user.getId(), pageable);
             else
-                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtAsc(user.getId());
+                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtAsc(user.getId(), pageable);
         }
     }
 
@@ -68,8 +71,7 @@ public class CreditService {
         return IntStream.range(1, creditRequest.getInstallmentCount() + 1)
                 .mapToObj(i -> Installment.builder()
                         .amount(calculateMonthlyPayment(creditRequest))
-                        .credit(credit)
-                        .status(true)
+                        .credit(credit).status(true)
                         .paymentType(PaymentType.NOT_PAID)
                         .paymentDate(DateUtils.calculateNextThirtyDays(LocalDateTime.now(), i))
                         .build())
@@ -77,8 +79,7 @@ public class CreditService {
     }
 
     private BigDecimal calculateMonthlyPayment(final CreditRequest creditRequest) {
-        return creditRequest
-                .getAmount()
+        return creditRequest.getAmount()
                 .divide(BigDecimal.valueOf(creditRequest.getInstallmentCount()), RoundingMode.HALF_UP);
     }
 }
