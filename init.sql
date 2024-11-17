@@ -10,13 +10,14 @@ CREATE TABLE users (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE;
 );
 
 -- Create the credits table
 CREATE TABLE credits (
     id SERIAL PRIMARY KEY,
-    status INT NOT NULL,
+    status BOOLEAN NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL,
@@ -28,7 +29,7 @@ CREATE TABLE installments (
     id SERIAL PRIMARY KEY,
     amount NUMERIC(10,2) NOT NULL,
     credit_id INT NOT NULL REFERENCES credits(id) ON DELETE CASCADE,
-    status INT NOT NULL,
+    status BOOLEAN NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
 );
