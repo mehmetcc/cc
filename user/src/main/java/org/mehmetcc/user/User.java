@@ -1,9 +1,7 @@
 package org.mehmetcc.user;
 
-import io.quarkus.hibernate.reactive.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,21 +24,26 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "users")
-public class User extends PanacheEntity {
+public class User extends PanacheEntityBase {
+    // No batch insertions so USERS_SEQ would suck
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer id;
+
     @Column(name = "first_name", nullable = false)
     public String firstName;
 
     @Column(name = "last_name", nullable = false)
     public String lastName;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     public java.time.LocalDateTime createdAt;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     public java.time.LocalDateTime updatedAt;
 
-    @UpdateTimestamp
     @Column(name = "is_active", nullable = false)
     public boolean isActive = true;
 }

@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @ApplicationScoped
-@Path("/api/v1/user")
+@Path("/api/v1/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
@@ -21,7 +21,7 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
-    public Uni<Response> getUserById(@PathParam("id") Long id) {
+    public Uni<Response> getUserById(@PathParam("id") Integer id) {
         return User.findById(id)
                 .onItem()
                 .ifNotNull()
@@ -42,7 +42,7 @@ public class UserResource {
 
     @PUT
     @Path("/{id}")
-    public Uni<Response> updateUser(@PathParam("id") Long id, User user) {
+    public Uni<Response> updateUser(@PathParam("id") Integer id, User user) {
         return Panache.withTransaction(() ->
                         User.<User>findById(id)
                                 .onItem()
@@ -62,7 +62,7 @@ public class UserResource {
 
     @DELETE
     @Path("/{id}")
-    public Uni<Response> delete(@PathParam("id") Long id) {
+    public Uni<Response> delete(@PathParam("id") Integer id) {
         return Panache.withTransaction(() ->
                         User.<User>findById(id)
                                 .onItem()
