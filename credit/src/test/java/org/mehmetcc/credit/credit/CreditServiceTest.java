@@ -12,7 +12,6 @@ import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.time.DayOfWeek.SATURDAY;
@@ -81,14 +80,14 @@ class CreditServiceTest {
         var credit = getValidCredit();
 
         // Stubbing
-        when(client.getById(1)).thenReturn(user);
+        when(client.getByUserId(1)).thenReturn(user);
         when(repository.save(any())).thenReturn(credit);
 
         // Interaction
         var output = service.createCredit(request);
 
         // Verification
-        verify(client).getById(any());
+        verify(client).getByUserId(any());
         verify(repository).save(any());
 
         // Assertions

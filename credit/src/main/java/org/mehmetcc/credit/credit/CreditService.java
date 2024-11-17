@@ -28,7 +28,7 @@ public class CreditService {
     }
 
     public Page<Credit> getCreditsByUserId(final Integer userId, final Pageable pageable) {
-        var user = userClient.getById(userId);
+        var user = userClient.getByUserId(userId);
         return creditRepository.findByUserId(user.getId(), pageable);
     }
 
@@ -36,7 +36,7 @@ public class CreditService {
                                                    final Boolean status,
                                                    final String sortingOrder,
                                                    final Pageable pageable) {
-        var user = userClient.getById(userId);
+        var user = userClient.getByUserId(userId);
 
         // Pfff.. Sometimes I really miss Scala
         // This is arguably the lesser of two evils, you can introduce an enum as well and switch based on that,
@@ -56,7 +56,7 @@ public class CreditService {
 
     @Transactional
     public Credit createCredit(final CreditRequest creditRequest) {
-        var user = userClient.getById(creditRequest.getUserId());
+        var user = userClient.getByUserId(creditRequest.getUserId());
 
         Credit credit = new Credit();
         credit.setUserId(user.getId());
