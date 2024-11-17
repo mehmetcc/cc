@@ -15,8 +15,8 @@ public class UserClient {
         this.client = builder.baseUrl("http://localhost:8081/api/v1/users").build();
     }
 
-    public User getById(final Integer id) {
-        var user = maybeGetById(id)
+    public User getByUserId(final Integer id) {
+        var user = maybeGetByUserId(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!user.getIsActive()) {
@@ -28,7 +28,7 @@ public class UserClient {
         return user;
     }
 
-    public Optional<User> maybeGetById(final Integer id) {
+    public Optional<User> maybeGetByUserId(final Integer id) {
         try {
             return Optional.ofNullable(client.get().uri("/{id}", id).retrieve().body(User.class));
         } catch (Throwable t) {
