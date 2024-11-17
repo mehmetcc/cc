@@ -9,9 +9,9 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE;
+    updated_at TIMESTAMP
 );
 
 -- Create the credits table
