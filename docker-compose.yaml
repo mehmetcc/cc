@@ -1,4 +1,20 @@
 services:
+  credit-service:
+    build:
+      context: ./credit
+      dockerfile: Dockerfile
+    ports:
+      - ${CREDIT_SERVICE_PORT}:${CREDIT_SERVICE_PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - CREDIT_SERVICE_PORT
+      - POSTGRES_PORT
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    networks:
+      - cc-network
   user-service:
     build:
       context: ./user
