@@ -17,12 +17,12 @@ import java.util.List;
 @Service
 public class CreditService {
 
-    private final CreditRepository credit;
+    private final CreditRepository creditRepository;
     private final UserClient userClient;
 
     @Autowired
     public CreditService(CreditRepository creditRepository, UserClient userClient) {
-        this.credit = creditRepository;
+        this.creditRepository = creditRepository;
         this.userClient = userClient;
     }
 
@@ -36,7 +36,7 @@ public class CreditService {
         credit.setStatus(true);
         credit.setInstallments(getIntermediaryInstallments(creditRequest, credit));
 
-        return this.credit.save(credit);
+        return creditRepository.save(credit);
     }
 
     private List<Installment> getIntermediaryInstallments(CreditRequest creditRequest, Credit credit) {
