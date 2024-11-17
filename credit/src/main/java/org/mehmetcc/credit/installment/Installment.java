@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class Installment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
