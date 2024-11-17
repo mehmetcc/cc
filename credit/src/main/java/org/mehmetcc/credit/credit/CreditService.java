@@ -26,6 +26,31 @@ public class CreditService {
         this.userClient = userClient;
     }
 
+    public List<Credit> getCreditsByUserId(final Integer userId) {
+        var user = userClient.getById(userId);
+        return creditRepository.findByUserId(user.getId());
+    }
+
+    public List<Credit> getFilteredCreditsByUserId(final Integer userId,
+                                                   final Boolean status,
+                                                   final String sortingOrder) {
+        var user = userClient.getById(userId);
+
+        // Pfff.. Sometimes I really miss Scala
+        // This is arguably the lesser of two evils, you can introduce an enum as well and switch based on that,
+        // although my package size is already getting too telescopic so here we are
+        if (status) {
+            if (sortingOrder.equals("DESC")) return creditRepository
+                    .findByUserIdAndStatusTrueOrderByCreatedAtDesc(user.getId());
+            else return creditRepository.findByUserIdAndStatusTrueOrderByCreatedAtAsc(user.getId());
+        } else {
+            if (sortingOrder.equals("DESC"))
+                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtDesc(user.getId());
+            else
+                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtAsc(user.getId());
+        }
+    }
+
     @Transactional
     public Credit createCredit(final CreditRequest creditRequest) {
         var user = userClient.getById(creditRequest.getUserId());

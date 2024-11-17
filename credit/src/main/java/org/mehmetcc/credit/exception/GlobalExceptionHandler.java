@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleUserNotFoundException(UserNotFoundException ex) {
@@ -19,6 +18,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotActiveException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleUserNotActiveException(UserNotActiveException ex) {
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(InvalidQueryParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidQueryParameterException(InvalidQueryParameterException ex) {
         return ex.getMessage();
     }
 
