@@ -1,4 +1,22 @@
 services:
+  user-service:
+    build:
+      context: ./user
+      dockerfile: src/main/docker/Dockerfile.quarkus
+    ports:
+      - ${USER_SERVICE_PORT}:${USER_SERVICE_PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - USER_SERVICE_PORT
+      - POSTGRES_PORT
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    networks:
+      - cc-network
+    command: >
+      ./mvnw quarkus:dev -Dquarkus.http.host=0.0.0.0
   postgres:
     image: postgres:latest
     container_name: postgres

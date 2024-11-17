@@ -1,0 +1,4 @@
+FROM maven:3-amazoncorretto-21
+COPY . /code
+WORKDIR /code
+CMD ./mvnw quarkus:dev
