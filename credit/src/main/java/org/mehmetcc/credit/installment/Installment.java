@@ -22,12 +22,15 @@ public class Installment {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "credit_id", foreignKey = @ForeignKey(name = "fk_installments_credit"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credit_id", nullable = false)
     private Credit credit;
 
-    @Column(nullable = false)
-    private Integer status;
+    private Boolean status = Boolean.TRUE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_type", nullable = false)
+    private PaymentType paymentType;
 
     @Column(nullable = false)
     @CreationTimestamp

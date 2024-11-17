@@ -1,4 +1,4 @@
-package org.mehmetcc.credit.commons;
+package org.mehmetcc.credit.commons.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,25 +8,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "users")
 @Data
 @NoArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
-    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    private Boolean isActive;
 }

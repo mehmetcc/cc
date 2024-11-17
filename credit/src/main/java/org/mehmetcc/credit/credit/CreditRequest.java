@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-class CreditRequest {
+public class CreditRequest {
     private Integer userId;
     private BigDecimal amount;
     private int installmentCount;

@@ -5,10 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.mehmetcc.credit.commons.User;
+import org.mehmetcc.credit.installment.Installment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "credits")
@@ -20,14 +21,16 @@ public class Credit {
     private Integer id;
 
     @Column(nullable = false)
-    private Integer status;
+    private Boolean status = Boolean.TRUE;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_credits_user"))
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
+
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Installment> installments;
 
     @Column(nullable = false)
     @CreationTimestamp
