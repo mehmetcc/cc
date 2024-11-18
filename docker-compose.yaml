@@ -8,6 +8,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      user-service:
+        condition: service_healthy
     environment:
       - CREDIT_SERVICE_PORT
       - POSTGRES_PORT
@@ -29,6 +31,18 @@ services:
       - POSTGRES_PORT
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://user-service:${USER_SERVICE_PORT}/q/health/ready",
+        ]
+      interval: 60s
+      timeout: 30s
+      retries: 10
+      start_period: 60s
     networks:
       - cc-network
     command: >

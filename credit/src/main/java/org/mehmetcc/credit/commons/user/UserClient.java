@@ -12,7 +12,7 @@ public class UserClient {
     private final RestClient client;
 
     public UserClient(final RestClient.Builder builder) {
-        this.client = builder.baseUrl("http://localhost:8081/api/v1/users").build();
+        this.client = builder.baseUrl("http://user-service:8081/api/v1/users").build();
     }
 
     public User getByUserId(final Integer id) {
