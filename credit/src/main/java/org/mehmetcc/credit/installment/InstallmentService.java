@@ -1,25 +1,25 @@
 package org.mehmetcc.credit.installment;
 
 import org.mehmetcc.credit.credit.Credit;
-import org.mehmetcc.credit.credit.CreditRepository;
+import org.mehmetcc.credit.credit.CreditJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InstallmentService {
-    private final InstallmentRepository installmentRepository;
+    private final InstallmentJpaRepository installmentJpaRepository;
 
-    private final CreditRepository creditRepository;
+    private final CreditJpaRepository creditJpaRepository;
 
-    public InstallmentService(final InstallmentRepository installmentRepository,
-                              final CreditRepository creditRepository) {
-        this.installmentRepository = installmentRepository;
-        this.creditRepository = creditRepository;
+    public InstallmentService(final InstallmentJpaRepository installmentJpaRepository,
+                              final CreditJpaRepository creditJpaRepository) {
+        this.installmentJpaRepository = installmentJpaRepository;
+        this.creditJpaRepository = creditJpaRepository;
     }
 
     @Transactional
     public InstallmentPaymentResponse makePayment(final InstallmentPaymentRequest installmentPaymentRequest) {
-        var installment = installmentRepository.getReferenceById(installmentPaymentRequest.getId());
+        var installment = installmentJpaRepository.getReferenceById(installmentPaymentRequest.getId());
         var credit = installment.getCredit();
 
         if (installment.getAmount().compareTo(installmentPaymentRequest.getAmount()) == -1) {
@@ -33,7 +33,7 @@ public class InstallmentService {
             installment.setPaymentType(PaymentType.PARTIALLY_PAID);
         }
 
-        var persisted = installmentRepository.save(installment);
+        var persisted = installmentJpaRepository.save(installment);
         persistFulfilledCredit(persisted, credit);
         return new InstallmentPaymentResponse(persisted.getId(), persisted.getPaymentType());
     }
@@ -53,7 +53,7 @@ public class InstallmentService {
         if (check) {
             credit.setInstallments(credit.getInstallments());
             credit.setStatus(false);
-            creditRepository.save(credit);
+            creditJpaRepository.save(credit);
         }
     }
 }

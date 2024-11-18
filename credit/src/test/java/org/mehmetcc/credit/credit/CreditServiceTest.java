@@ -28,7 +28,7 @@ class CreditServiceTest {
     private UserClient client;
 
     @Mock
-    private CreditRepository repository;
+    private CreditJpaRepository repository;
 
     @InjectMocks
     private CreditService service;

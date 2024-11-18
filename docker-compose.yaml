@@ -15,6 +15,9 @@ services:
       - POSTGRES_PORT
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - REDIS_PORT
+      - REDIS_HOST
+    restart: always
     networks:
       - cc-network
   user-service:
@@ -43,6 +46,7 @@ services:
       timeout: 30s
       retries: 20
       start_period: 60s
+    restart: always
     networks:
       - cc-network
     command: >
@@ -85,10 +89,27 @@ services:
       - pgadmin_volume:/var/lib/pgadmin
     networks:
       - cc-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - redis_data:/data
+    networks:
+      - cc-network
+    environment:
+      - REDIS_PORT
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_volume:
   pgadmin_volume:
+  redis_data:
 
 networks:
   cc-network:

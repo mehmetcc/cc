@@ -18,18 +18,18 @@ import java.util.stream.IntStream;
 
 @Service
 public class CreditService {
-    private final CreditRepository creditRepository;
+    private final CreditJpaRepository creditJpaRepository;
     private final UserClient userClient;
 
     @Autowired
-    public CreditService(final CreditRepository creditRepository, final UserClient userClient) {
-        this.creditRepository = creditRepository;
+    public CreditService(final CreditJpaRepository creditJpaRepository, final UserClient userClient) {
+        this.creditJpaRepository = creditJpaRepository;
         this.userClient = userClient;
     }
 
     public Page<Credit> getCreditsByUserId(final Integer userId, final Pageable pageable) {
         var user = userClient.getByUserId(userId);
-        return creditRepository.findByUserId(user.getId(), pageable);
+        return creditJpaRepository.findByUserId(user.getId(), pageable);
     }
 
     public Page<Credit> getFilteredCreditsByUserId(final Integer userId,
@@ -43,14 +43,14 @@ public class CreditService {
         // although my package size is already getting too telescopic so here we are
         if (status) {
             if (sortingOrder.equals("DESC"))
-                return creditRepository.findByUserIdAndStatusTrueOrderByCreatedAtDesc(user.getId(), pageable);
+                return creditJpaRepository.findByUserIdAndStatusTrueOrderByCreatedAtDesc(user.getId(), pageable);
             else
-                return creditRepository.findByUserIdAndStatusTrueOrderByCreatedAtAsc(user.getId(), pageable);
+                return creditJpaRepository.findByUserIdAndStatusTrueOrderByCreatedAtAsc(user.getId(), pageable);
         } else {
             if (sortingOrder.equals("DESC"))
-                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtDesc(user.getId(), pageable);
+                return creditJpaRepository.findByUserIdAndStatusFalseOrderByCreatedAtDesc(user.getId(), pageable);
             else
-                return creditRepository.findByUserIdAndStatusFalseOrderByCreatedAtAsc(user.getId(), pageable);
+                return creditJpaRepository.findByUserIdAndStatusFalseOrderByCreatedAtAsc(user.getId(), pageable);
         }
     }
 
@@ -64,7 +64,7 @@ public class CreditService {
         credit.setStatus(true);
         credit.setInstallments(processIntermediaryInstallments(creditRequest, credit));
 
-        return creditRepository.save(credit);
+        return creditJpaRepository.save(credit);
     }
 
     private List<Installment> processIntermediaryInstallments(final CreditRequest creditRequest, final Credit credit) {

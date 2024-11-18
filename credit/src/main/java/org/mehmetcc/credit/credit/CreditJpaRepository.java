@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CreditRepository extends JpaRepository<Credit, Integer> {
+public interface CreditJpaRepository extends JpaRepository<Credit, Integer> {
     Page<Credit> findByUserId(Integer userId, Pageable pageable);
 
     Page<Credit> findByUserIdAndStatusTrueOrderByCreatedAtAsc(Integer userId, Pageable pageable);
