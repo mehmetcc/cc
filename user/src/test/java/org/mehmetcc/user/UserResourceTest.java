@@ -4,12 +4,10 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.is;
 
 // TODO add some tests for update and delete endpoints, if there's some time
 // TODO these endpoints are not going to be used anyways, so this is not too urgent for now
-
 @QuarkusTest
 class UserResourceTest {
     @Test
